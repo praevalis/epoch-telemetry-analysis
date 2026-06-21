@@ -1,0 +1,14 @@
+[project]
+name = "epoch-worker"
+version = "0.1.0"
+description = "Asynchronous background consumer for evaluating event-driven telemetry anomalies using ONNX inference."
+dependencies = [
+    "onnxruntime>=1.27.0",
+]
+
+[tool.uv.sources]
+epoch-engine = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

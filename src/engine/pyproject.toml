@@ -1,0 +1,14 @@
+[project]
+name = "epoch-engine"
+version = "0.1.0"
+description = "Core domain logic, data models and database repositories."
+dependencies = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "pydantic>=2.13.4",
+    "sqlalchemy>=2.0.51",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

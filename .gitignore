@@ -1,0 +1,12 @@
+# Environment files
+.venv/
+
+# Cache files
+__pycache__/
+.ruff_cache/
+
+# Ignore all .env files in the project
+.env
+.env.*
+!.env.template
+!.env.example
