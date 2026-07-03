@@ -6,6 +6,17 @@ readme = "README.md"
 requires-python = ">=3.13"
 authors = [{ name = "Akshat Mishra", email = "akshatdmishra2005@gmail.com" }]
 
+dependencies = [
+    "epoch-api",
+    "epoch-engine",
+    "epoch-worker",
+]
+
+[tool.uv.sources]
+epoch-api = { workspace = true }
+epoch-engine = { workspace = true }
+epoch-worker = { workspace = true }
+
 [tool.uv.workspace]
 members = [
     "src/api",
