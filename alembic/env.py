@@ -4,6 +4,7 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.schema import SchemaItem
 
 from alembic import context
 from engine.config import Settings
@@ -22,6 +23,15 @@ if config.config_file_name is not None:
 
 
 target_metadata = Base.metadata
+
+
+def include_object(
+    object: SchemaItem, name: str | None, type_: str, reflected: bool, compare_to: SchemaItem | None
+):
+    """Filters out database objects during Alembic's autogenerate process."""
+    return not (
+        type_ == 'index' and name in ['raw_telemetry_time_idx', 'telemetry_analysis_time_idx']
+    )
 
 
 def run_migrations_offline() -> None:
@@ -49,7 +59,9 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection, target_metadata=target_metadata, include_object=include_object
+    )
 
     with context.begin_transaction():
         context.run_migrations()

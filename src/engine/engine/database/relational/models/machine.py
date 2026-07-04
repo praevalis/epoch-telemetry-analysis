@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, func
+from sqlalchemy import CheckConstraint, Index, func, text
 from sqlalchemy.dialects.postgresql import BOOLEAN, TEXT, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,6 +24,12 @@ class Machine(Base):
             '(is_active = true AND deleted_at IS NULL) OR '
             '(is_active = false AND deleted_at IS NOT NULL)',
             name='chk_deleted_at',
+        ),
+        Index(
+            'ix_machines_name_unique_active',
+            'name',
+            unique=True,
+            postgresql_where=text('deleted_at IS NULL'),
         ),
     )
 
