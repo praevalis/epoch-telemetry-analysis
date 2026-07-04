@@ -8,8 +8,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     ENVIRONMENT: Literal['development', 'testing', 'production'] = 'development'
 
-    DB_HOST: str = 'http://localhost'
-    DB_PORT: str = '5432'
+    DB_HOST: str = 'localhost'
+    DB_PORT: str = '5433'
     DB_USERNAME: str = 'postgres'
     DB_PASSWORD: SecretStr = SecretStr('postgres')
     DB_NAME: str = 'epoch_db'
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
         return (
             f'postgresql+asyncpg://{parsed_username}:{parsed_password}'
-            f'@{self.DB_HOST}:{self.DB_PORT}/${self.DB_NAME}{ssl_param}'
+            f'@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}{ssl_param}'
         )
 
     REDIS_HOST: str = 'localhost'
