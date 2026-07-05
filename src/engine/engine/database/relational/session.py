@@ -5,6 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from engine.database.relational.interfaces import ISessionManager
 
+# NOTE: Type alias exported for downstream packages to prevent SQLAlchemy dependency
+# May or may not be used inside the `engine` package itself.
+DbSession = AsyncSession
+
 
 class TimescaleSessionManager(ISessionManager):
     """Provides ephemeral, safe context for asynchronous timescaledb operations. It is decoupled

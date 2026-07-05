@@ -5,6 +5,6 @@ ORM config for the relational databases used in the application.
 """
 
 from .interfaces import ISessionManager
-from .session import TimescaleSessionManager
+from .session import DbSession, TimescaleSessionManager
 
-__all__ = ['ISessionManager', 'TimescaleSessionManager']
+__all__ = ['DbSession', 'ISessionManager', 'TimescaleSessionManager']
