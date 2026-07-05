@@ -62,14 +62,14 @@ class IMachineRepository(Protocol):
         """
         ...
 
-    async def delete(self, machine_id: UUID) -> None:
+    async def delete(self, machine_id: UUID) -> MachineResponse:
         """Deletes the machine having provided ID.
 
         Args:
             machine_id: ID of the machine to delete.
 
         Returns:
-            Empty response after successful deletion.
+            Deleted machine.
 
         Raises:
             MachineNotFoundError: When a machine with the given ID does not exists.

@@ -43,7 +43,7 @@ class MachineRepository(IMachineRepository):
         self.session.add(machine)
 
         try:
-            await self.session.commit()
+            await self.session.flush()
 
         except IntegrityError as e:
             if getattr(e.orig, 'sqlstate', None) == '23505':
@@ -51,6 +51,7 @@ class MachineRepository(IMachineRepository):
 
             raise
 
+        await self.session.refresh(machine)
         return MachineResponse.model_validate(machine)
 
     async def get_by_id(self, machine_id: UUID) -> MachineResponse:
@@ -107,7 +108,7 @@ class MachineRepository(IMachineRepository):
         stmt = stmt.limit(filter_params.limit).offset(filter_params.offset)
 
         result = await self.session.execute(stmt)
-        machines = result.all()
+        machines = result.scalars().all()
 
         return [MachineResponse.model_validate(m) for m in machines]
 
@@ -134,10 +135,10 @@ class MachineRepository(IMachineRepository):
 
         update_data = payload.model_dump(exclude_unset=True)
         for key, value in update_data.items():
-            setattr(Machine, key, value)
+            setattr(machine, key, value)
 
         try:
-            await self.session.commit()
+            await self.session.flush()
 
         except IntegrityError as e:
             if getattr(e.orig, 'sqlstate', None) == '23505':
@@ -149,14 +150,14 @@ class MachineRepository(IMachineRepository):
         await self.session.refresh(machine)
         return MachineResponse.model_validate(machine)
 
-    async def delete(self, machine_id: UUID) -> None:
+    async def delete(self, machine_id: UUID) -> MachineResponse:
         """Deletes the machine having provided ID.
 
         Args:
             machine_id: ID of the machine to delete.
 
         Returns:
-            Empty response after successful deletion.
+            Deleted machine.
 
         Raises:
             MachineNotFoundError: When a machine with the given ID does not exists.
@@ -173,4 +174,6 @@ class MachineRepository(IMachineRepository):
             func.now()
         )  # Using func.now() instead of datetime.now() to prevent Clock Skew problem
 
-        await self.session.commit()
+        await self.session.flush()
+        await self.session.refresh(machine)
+        return MachineResponse.model_validate(machine)
