@@ -1,11 +1,11 @@
 from uuid import UUID
 
 from engine.database.cache import ICacheManager
-from engine.database.relational.models import ApiKeyStatusEnum
 from engine.domain.api_key import (
     ApiKeyCreate,
     ApiKeyFilterParams,
     ApiKeyResponse,
+    ApiKeyStatusEnum,
     IApiKeyRepository,
 )
 

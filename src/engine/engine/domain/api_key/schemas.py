@@ -1,18 +1,26 @@
 from datetime import datetime
+from enum import StrEnum
 from typing import Literal
 from uuid import UUID
 
 from pydantic import Field
 
-from engine.database.relational.models import ApiKeyStatusEnum
 from engine.domain.common import BaseDomainModel, BaseQueryModel
 
 
-class ApiKeyCreate(BaseDomainModel):
-    key_hash: str
+class ApiKeyStatusEnum(StrEnum):
+    ACTIVE = 'ACTIVE'
+    REVOKED = 'REVOKED'
+
+
+class ApiKeyCreateMetadata(BaseDomainModel):
     name: str
-    masked_key: str
     machine_id: UUID
+
+
+class ApiKeyCreate(ApiKeyCreateMetadata):
+    key_hash: str
+    masked_key: str
 
 
 class ApiKeyResponse(BaseDomainModel):
@@ -25,6 +33,10 @@ class ApiKeyResponse(BaseDomainModel):
     revoked_at: datetime | None
     created_at: datetime
     updated_at: datetime
+
+
+class ApiKeyRawResponse(ApiKeyResponse):
+    raw_key: str
 
 
 class ApiKeyFilterParams(BaseQueryModel):

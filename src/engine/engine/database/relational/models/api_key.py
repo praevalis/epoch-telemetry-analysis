@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import StrEnum
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
@@ -8,15 +7,12 @@ from sqlalchemy.dialects.postgresql import TEXT, TIMESTAMP, VARCHAR
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from engine.domain.api_key import ApiKeyStatusEnum
+
 from .base import Base
 
 if TYPE_CHECKING:
     from .machine import Machine
-
-
-class ApiKeyStatusEnum(StrEnum):
-    ACTIVE = 'ACTIVE'
-    REVOKED = 'REVOKED'
 
 
 class ApiKey(Base):

@@ -4,13 +4,14 @@ from sqlalchemy import func, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from engine.database.relational.models import ApiKey, ApiKeyStatusEnum
+from engine.database.relational.models import ApiKey
 from engine.domain.api_key import (
     ApiKeyCreate,
     ApiKeyFilterParams,
     ApiKeyNotFoundError,
     ApiKeyResponse,
     ApiKeyRevokedError,
+    ApiKeyStatusEnum,
     IApiKeyRepository,
 )
 
@@ -44,7 +45,9 @@ class ApiKeyRepository(IApiKeyRepository):
         return ApiKeyResponse.model_validate(api_key)
 
     async def get_by_id(self, key_id: UUID) -> ApiKeyResponse:
-        """Retrieves an API key using the provided ID.
+        """Retrieves an API key using the provided ID. Returns both
+        active and revoked keys, the service layer is responsible for
+        handling revoked keys.
 
         Args:
             key_id: ID of the API key.
@@ -54,7 +57,6 @@ class ApiKeyRepository(IApiKeyRepository):
 
         Raises:
             ApiKeyNotFoundError: When a key with the specified ID is not found.
-            ApiKeyRevokedError: If the key with the given ID is revoked.
         """
         stmt = select(ApiKey).where(ApiKey.id == key_id)
 
@@ -65,13 +67,12 @@ class ApiKeyRepository(IApiKeyRepository):
         except NoResultFound as e:
             raise ApiKeyNotFoundError(key_id) from e
 
-        if api_key.status == ApiKeyStatusEnum.REVOKED:
-            raise ApiKeyRevokedError(key_id=key_id)
-
         return ApiKeyResponse.model_validate(api_key)
 
     async def get_by_hash(self, key_hash: str) -> ApiKeyResponse:
-        """Retrieves an API key using the provided hash.
+        """Retrieves an API key using the provided hash. Returns both
+        active and revoked keys, the service layer is responsible for
+        handling revoked keys.
 
         Args:
             key_hash: Hash of the API key.
@@ -81,7 +82,6 @@ class ApiKeyRepository(IApiKeyRepository):
 
         Raises:
             ApiKeyNotFoundError: When a key with the hash is not found.
-            ApiKeyRevokedError: If the key with the given hash is revoked.
         """
         stmt = select(ApiKey).where(ApiKey.key_hash == key_hash)
 
@@ -91,9 +91,6 @@ class ApiKeyRepository(IApiKeyRepository):
 
         except NoResultFound as e:
             raise ApiKeyNotFoundError(key_hash=key_hash) from e
-
-        if api_key.status == ApiKeyStatusEnum.REVOKED:
-            raise ApiKeyRevokedError(api_key.id)
 
         return ApiKeyResponse.model_validate(api_key)
 
