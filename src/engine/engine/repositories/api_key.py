@@ -96,7 +96,7 @@ class ApiKeyRepository(IApiKeyRepository):
 
     async def get_many_for_machine(
         self, machine_id: UUID, filter_params: ApiKeyFilterParams
-    ) -> list[ApiKeyResponse]:
+    ) -> tuple[list[ApiKeyResponse], int]:
         """Retrieves API keys for the given machine and filter params.
 
         Args:
@@ -104,7 +104,7 @@ class ApiKeyRepository(IApiKeyRepository):
             filter_params: Filter criteria.
 
         Returns:
-            Retrieved API keys.
+            Retrieved API keys and the total number of keys.
         """
         stmt = select(ApiKey).where(ApiKey.machine_id == machine_id)
 
@@ -117,6 +117,9 @@ class ApiKeyRepository(IApiKeyRepository):
             search_term = f'%{filter_params.search}%'
             stmt = stmt.where(ApiKey.name.ilike(search_term))
 
+        count_stmt = stmt.with_only_columns(func.count(ApiKey.id)).order_by(None)
+        total = (await self.session.execute(count_stmt)).scalar_one()
+
         sort_column = getattr(ApiKey, filter_params.sort_by)
         if filter_params.sort_dir == 'asc':
             stmt = stmt.order_by(sort_column.asc())
@@ -127,7 +130,7 @@ class ApiKeyRepository(IApiKeyRepository):
         result = await self.session.execute(stmt)
         api_keys = result.scalars().all()
 
-        return [ApiKeyResponse.model_validate(k) for k in api_keys]
+        return [ApiKeyResponse.model_validate(k) for k in api_keys], total
 
     async def revoke(self, key_id: UUID) -> ApiKeyResponse:
         """Revokes API key with the given ID.

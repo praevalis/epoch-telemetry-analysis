@@ -74,7 +74,7 @@ class CachedApiKeyRepository(IApiKeyRepository):
         Args:
             machine_id: ID of the machine.
         """
-        keys_to_revoke = await self.db_repo.get_many_for_machine(
+        keys_to_revoke, _ = await self.db_repo.get_many_for_machine(
             machine_id, ApiKeyFilterParams(status=ApiKeyStatusEnum.ACTIVE)
         )
 
@@ -92,5 +92,5 @@ class CachedApiKeyRepository(IApiKeyRepository):
 
     async def get_many_for_machine(
         self, machine_id: UUID, filter_params: ApiKeyFilterParams
-    ) -> list[ApiKeyResponse]:
+    ) -> tuple[list[ApiKeyResponse], int]:
         return await self.db_repo.get_many_for_machine(machine_id, filter_params)

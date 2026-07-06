@@ -101,7 +101,7 @@ class ApiKeyService:
 
     async def get_api_keys_for_machine(
         self, machine_id: UUID, filter_params: ApiKeyFilterParams
-    ) -> list[ApiKeyResponse]:
+    ) -> tuple[list[ApiKeyResponse], int]:
         """Retrieves API keys associated with the machine that fulfill
         filter criteria.
 
@@ -110,7 +110,7 @@ class ApiKeyService:
             filter_params: Filter criteria.
 
         Returns:
-            Retrieved API keys.
+            Retrieved API keys and the total number of API keys.
         """
         return await self.api_key_repo.get_many_for_machine(machine_id, filter_params)
 

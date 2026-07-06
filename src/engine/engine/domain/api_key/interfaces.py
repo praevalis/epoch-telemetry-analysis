@@ -50,7 +50,7 @@ class IApiKeyRepository(Protocol):
 
     async def get_many_for_machine(
         self, machine_id: UUID, filter_params: ApiKeyFilterParams
-    ) -> list[ApiKeyResponse]:
+    ) -> tuple[list[ApiKeyResponse], int]:
         """Retrieves API keys for the given machine and filter params.
 
         Args:
@@ -58,7 +58,7 @@ class IApiKeyRepository(Protocol):
             filter_params: Filter criteria.
 
         Returns:
-            Retrieved API keys.
+            Retrieved API keys and the total number of keys.
         """
         ...
 
