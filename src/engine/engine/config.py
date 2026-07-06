@@ -49,5 +49,5 @@ class Settings(BaseSettings):
 
         return (
             f'{protocol}://{parsed_username}:{parsed_password}'
-            f'@{self.REDIS_HOST}:{self.REDIS_PASSWORD}/{self.REDIS_INDEX}'
+            f'@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_INDEX}'
         )

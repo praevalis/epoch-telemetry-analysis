@@ -19,6 +19,8 @@ settings = get_api_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Handles app lifecycle events (startup, shutdown)."""
+    manager = None
+
     try:
         logger.info('Initializing TCP connection pools.')
 
@@ -29,8 +31,9 @@ async def lifespan(app: FastAPI):
 
         yield
     finally:
-        await manager.close()
-        logger.info('Successfully closed TCP connection pools.')
+        if manager is not None:
+            await manager.close()
+            logger.info('Successfully closed TCP connection pools.')
 
 
 def create_app() -> FastAPI:

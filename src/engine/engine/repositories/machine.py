@@ -77,14 +77,16 @@ class MachineRepository(IMachineRepository):
 
         return MachineResponse.model_validate(machine)
 
-    async def get_many(self, filter_params: MachineFilterParams) -> list[MachineResponse]:
+    async def get_many(
+        self, filter_params: MachineFilterParams
+    ) -> tuple[list[MachineResponse], int]:
         """Retrieves machines based on defined filters.
 
         Args:
             filter_params: Conditions for filtering machines.
 
         Returns:
-            Retrieved machines.
+            Retrieved machines and total number of machines.
         """
         stmt = select(Machine)
 
@@ -99,6 +101,9 @@ class MachineRepository(IMachineRepository):
                 or_(Machine.name.ilike(search_term), Machine.description.ilike(search_term))
             )
 
+        count_stmt = stmt.with_only_columns(func.count(Machine.id)).order_by(None)
+        total = (await self.session.execute(count_stmt)).scalar_one()
+
         sort_column = getattr(Machine, filter_params.sort_by)
         if filter_params.sort_dir == 'asc':
             stmt = stmt.order_by(sort_column.asc())
@@ -110,7 +115,7 @@ class MachineRepository(IMachineRepository):
         result = await self.session.execute(stmt)
         machines = result.scalars().all()
 
-        return [MachineResponse.model_validate(m) for m in machines]
+        return [MachineResponse.model_validate(m) for m in machines], total
 
     async def update(self, machine_id: UUID, payload: MachineUpdate) -> MachineResponse:
         """Updates the machine with the provided data.

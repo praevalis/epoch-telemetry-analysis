@@ -21,7 +21,7 @@ class StructuredFormatter(logging.Formatter):
         original_levelname = record.levelname  # Storing the original level to prevent mutation
 
         color = self.COLORS.get(record.levelno, self.RESET)
-        record.levelname = f'{color}{original_levelname}{self.RESET}'
+        record.levelname = f'{color}[{original_levelname}]{self.RESET}'
 
         formatter = logging.Formatter(self.FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
         formatted_message = formatter.format(record)

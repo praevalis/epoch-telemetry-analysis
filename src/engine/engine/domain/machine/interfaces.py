@@ -35,14 +35,16 @@ class IMachineRepository(Protocol):
         """
         ...
 
-    async def get_many(self, filter_params: MachineFilterParams) -> list[MachineResponse]:
+    async def get_many(
+        self, filter_params: MachineFilterParams
+    ) -> tuple[list[MachineResponse], int]:
         """Retrieves machines based on defined filters.
 
         Args:
             filter_params: Conditions for filtering machines.
 
         Returns:
-            Retrieved machines.
+            Retrieved machines and total number of machines.
         """
         ...
 

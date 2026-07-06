@@ -56,14 +56,16 @@ class MachineService:
         """
         return await self.machine_repo.get_by_id(machine_id)
 
-    async def get_many_machines(self, filter_params: MachineFilterParams) -> list[MachineResponse]:
+    async def get_many_machines(
+        self, filter_params: MachineFilterParams
+    ) -> tuple[list[MachineResponse], int]:
         """Retrieves all machines based on provided filter.
 
         Args:
             filter_params: Filter criteria.
 
         Returns:
-            Retrieved machines.
+            Retrieved machines and total number of machines.
         """
         return await self.machine_repo.get_many(filter_params)
 
