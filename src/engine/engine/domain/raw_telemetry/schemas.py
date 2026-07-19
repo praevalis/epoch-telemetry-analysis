@@ -78,6 +78,6 @@ class RawTelemetryResponse(BaseDomainModel):
 
 
 class RawTelemetryFilterParams(BaseQueryModel):
-    start_time: datetime | None
-    end_time: datetime | None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
     sort_by: Literal['time'] = 'time'
