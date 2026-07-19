@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from engine.config import Settings
 from engine.database.cache import RedisCacheManager
+from engine.database.event import RedisStreamManager
 from engine.database.relational import TimescaleSessionManager
 
 
@@ -27,6 +28,10 @@ class ConnectionManager:
     def get_cache_manager(self) -> RedisCacheManager:
         """Returns an adapter for cache operations."""
         return RedisCacheManager(self._redis_client)
+
+    def get_event_manager(self) -> RedisStreamManager:
+        """Returns an adapter for pub/sub event operations."""
+        return RedisStreamManager(self._redis_client)
 
     async def close(self) -> None:
         """Gracefully shuts down all connection pools."""

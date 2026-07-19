@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from engine.database.relational.interfaces import ISessionManager
+from .interfaces import ISessionManager
 
 # NOTE: Type alias exported for downstream packages to prevent SQLAlchemy dependency
 # May or may not be used inside the `engine` package itself.

@@ -2,7 +2,7 @@ from typing import Any, cast
 
 from redis.asyncio import Redis
 
-from engine.database.cache.interfaces import ICacheManager
+from .interfaces import ICacheManager
 
 
 class RedisCacheManager(ICacheManager):
